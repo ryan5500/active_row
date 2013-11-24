@@ -3,7 +3,7 @@
 /**
  * ActiveRowを使うベースとなるオブジェクト
  *
- * 使用例: 
+ * 使用例:
  *   AR.t('シート1').where({name: 'nick'}); // => returns [{id: 1, name: nick, email: 'nick@example.com'}]
  *
  */
@@ -15,9 +15,9 @@ var AR = {
   t: function(name) {
     if (typeof AR.memoTables === "undefined") { AR.memoTables = {}; }
 
-    if (!AR.memoTables[name]) { 
+    if (!AR.memoTables[name]) {
       AR.memoTables[name] = new ARTable(name);
-    }    
+    }
 
     return AR.memoTables[name];
   },
@@ -33,7 +33,7 @@ var ARTable = function(name, option) {
   if (this.sheet === null) {
     throw new SheetNotFoundException("Sheet: " + name + "was not found.");
   }
-  
+
   if (typeof option === "undefined" || Object.keys(option).length === 0) {
     this.option = {
       headerRowIndex: 1,
@@ -45,25 +45,25 @@ var ARTable = function(name, option) {
 
   this.column = {};
   this.inverseColumn = {};
-  var headerRow = this.sheet.getRange(this.option.headerRowIndex, 
-                                      this.option.headerColumnStartIndex, 
-                                      1, 
+  var headerRow = this.sheet.getRange(this.option.headerRowIndex,
+                                      this.option.headerColumnStartIndex,
+                                      1,
                                       this.sheet.getLastColumn()).getValues();
   for (var i = 0; i < headerRow[0].length; i++) {
     var columnName = headerRow[0][i];
     this.column[columnName] = i + 1;
     this.inverseColumn[i] = columnName;
-    
+
     //findByXXXメソッドを定義する
     var that = this;
     var capitalizedColumnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
     ARTable.prototype['findBy' + capitalizedColumnName] = function() {
-      var newColumnName = columnName.slice(0);   
-      
+      var newColumnName = columnName.slice(0);
+
       return function(data) {
         var whereParams = {};
         whereParams[newColumnName] = data;
-        
+
         return that.where(whereParams);
       };
     }();
@@ -78,29 +78,29 @@ ARTable.prototype = {
   find: function(id) {
     return this.where({id: id});
   },
-  
+
   /**
    * optionで指定した行の数を数える
    * @param {Object} option
-   */  
+   */
   count: function(option) {
-    var keys = Object.keys(option);    
+    var keys = Object.keys(option);
     var hitRowIndexes = this._seekRows(keys[0], option[keys[0]]);
-    
+
     return hitRowIndexes.length;
   },
 
   /**
    * optionで指定した行をオブジェクト配列で返す
    * @param {Object} option
-   */  
+   */
   where: function(option) {
-    var keys = Object.keys(option);    
+    var keys = Object.keys(option);
     var hitRowIndexes = this._seekRows(keys[0], option[keys[0]]);
     if (hitRowIndexes.length === 0) {
       return [];
     }
-    
+
     return this._createTableObjects(hitRowIndexes);
   },
 
@@ -108,7 +108,7 @@ ARTable.prototype = {
    * 指定されたコラムに該当するデータのある行を探す
    * @param {String} column コラムの文字列
    * @param {String} data   データ
-   */  
+   */
   _seekRows: function(column, data) {
     var columnIndex = this.column[column];
     var dataRowStartIndex = this.option.headerRowIndex + 1;
@@ -121,17 +121,17 @@ ARTable.prototype = {
         hitRowIndexes.push(dataRowStartIndex + i);
       }
     }
-    
+
     return hitRowIndexes;
   },
 
   /**
    * ヒットした行のデータにkeyを足してオブジェクト配列として返す
    * @param {Array} hitRowIndexes ヒットした行のID群
-   */  
+   */
   _createTableObjects: function(hitRowIndexes) {
     var result = [];
-    
+
     for (var i = 0; i < hitRowIndexes.length; i++) {
       var rowValues = this.sheet.getRange(hitRowIndexes[i],
                                           this.option.headerColumnStartIndex,
@@ -145,7 +145,7 @@ ARTable.prototype = {
         result.push(tmpResult);
       }
     }
-    
+
     return result;
   },
 };
@@ -159,7 +159,7 @@ var SheetNotFoundException = function(message) {
   this.message = message;
   this.name = "SheetNotFoundException";
 };
-  
+
 global.AR = AR;
 
 })(this);
