@@ -24,11 +24,12 @@ After this, the script added a base object "AR" at google apps script environmen
 
 If you have spreadsheet "sheet 1" like this,
 
-id | name | email | is_activate 
--- | ---- | ----- | -----------    
+id | name | email | is_activate
+--- | --- | --- | ---
 1 | ryan  | ryan@example.com | true
 2 | nick  | nick@example.com | false
 3 | tom   | tom@example.com  | true
+id | name | email | is_activate
 
 this sample code works like this.
 
