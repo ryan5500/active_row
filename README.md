@@ -26,21 +26,21 @@ If you have spreadsheet "sheet 1" like this,
 
 id | name | email | is_activate
 --- | --- | --- | ---
-1 | ryan  | ryan@example.com | true
-2 | nick  | nick@example.com | false
-3 | tom   | tom@example.com  | true
+1 | ryan  | ryan at example.com | true
+2 | nick  | nick at example.com | false
+3 | tom   | tom at example.com  | true
 id | name | email | is_activate
 
 this sample code works like this.
 
     AR.t('sheet 1').where({is_activate: 'true'}) 
-    // return [{id: 1, name: 'ryan', email: 'ryan@example.com'}, {id: 3, name: 'tom', email: 'tom@example.com'}]
+    // return [{id: 1, name: 'ryan', email: 'ryan at example.com'}, {id: 3, name: 'tom', email: 'tom at example.com'}]
     
     AR.t('sheet 1').find(2)
-    // return [{id: 2, name: 'nick', email: 'nick@example.com'}]
+    // return [{id: 2, name: 'nick', email: 'nick at example.com'}]
     
     AR.t('sheet 1').findByName('tom')
-    // return [{id: 3, name: 'tom', email: 'tom@example.com'}]
+    // return [{id: 3, name: 'tom', email: 'tom at example.com'}]
 
 
 ## Copyright
