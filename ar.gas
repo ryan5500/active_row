@@ -43,6 +43,8 @@ var ARTable = function(name, option) {
     this.option = option || {};
   }
 
+
+  // columnを設定する
   this.column = {};
   this.inverseColumn = {};
   var headerRow = this.sheet.getRange(this.option.headerRowIndex,
@@ -50,13 +52,14 @@ var ARTable = function(name, option) {
                                       1,
                                       this.sheet.getLastColumn()).getValues();
   for (var i = 0; i < headerRow[0].length; i++) {
-    var columnName = headerRow[0][i];
+    var that                  = this,
+        columnName            = headerRow[0][i],
+        capitalizedColumnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
+
     this.column[columnName] = i + 1;
     this.inverseColumn[i] = columnName;
 
     //findByXXXメソッドを定義する
-    var that = this;
-    var capitalizedColumnName = columnName.charAt(0).toUpperCase() + columnName.slice(1);
     ARTable.prototype['findBy' + capitalizedColumnName] = function() {
       var newColumnName = columnName.slice(0);
 
@@ -84,8 +87,8 @@ ARTable.prototype = {
    * @param {Object} option
    */
   count: function(option) {
-    var keys = Object.keys(option);
-    var hitRowIndexes = this._seekRows(keys[0], option[keys[0]]);
+    var keys          = Object.keys(option),
+        hitRowIndexes = this._seekRows(keys[0], option[keys[0]]);
 
     return hitRowIndexes.length;
   },
@@ -95,8 +98,8 @@ ARTable.prototype = {
    * @param {Object} option
    */
   where: function(option) {
-    var keys = Object.keys(option);
-    var hitRowIndexes = this._seekRows(keys[0], option[keys[0]]);
+    var keys          = Object.keys(option),
+        hitRowIndexes = this._seekRows(keys[0], option[keys[0]]);
     if (hitRowIndexes.length === 0) {
       return [];
     }
@@ -110,12 +113,13 @@ ARTable.prototype = {
    * @param {String} data   データ
    */
   _seekRows: function(column, data) {
-    var columnIndex = this.column[column];
-    var dataRowStartIndex = this.option.headerRowIndex + 1;
-    var columnValues = this.sheet.getRange(dataRowStartIndex,
-                                           columnIndex,
-                                           this.sheet.getLastRow()).getValues();
-    var hitRowIndexes = [];
+    var hitRowIndexes     = [],
+        columnIndex       = this.column[column],
+        dataRowStartIndex = this.option.headerRowIndex + 1,
+        columnValues      = this.sheet.getRange(dataRowStartIndex,
+                                                columnIndex,
+                                                this.sheet.getLastRow()).getValues();
+
     for (var i = 0; i < columnValues.length; i++) {
       if (columnValues[i][0] === data) {
         hitRowIndexes.push(dataRowStartIndex + i);
@@ -133,14 +137,15 @@ ARTable.prototype = {
     var result = [];
 
     for (var i = 0; i < hitRowIndexes.length; i++) {
-      var rowValues = this.sheet.getRange(hitRowIndexes[i],
+      var tmpResult = {},
+          rowValues = this.sheet.getRange(hitRowIndexes[i],
                                           this.option.headerColumnStartIndex,
                                           1,
                                           this.sheet.getLastColumn()).getValues();
-      var tmpResult = {};
       for (var j = 0; j < rowValues[0].length; j++) {
         tmpResult[this.inverseColumn[j]] = rowValues[0][j];
       }
+
       if (Object.keys(tmpResult).length !== 0) {
         result.push(tmpResult);
       }
