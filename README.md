@@ -46,6 +46,54 @@ this sample code works like this.
     // return [{id: 3, name: 'tom', email: 'tom at example.com'}]
 
 
+## Customize
+
+You can change header row index and header column start index.
+
+if you have spreadsheet like this,
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="3">attributes</th>
+    </tr>
+    <tr>
+      <th>id</th>
+      <th>name</th>
+      <th>email</th>
+      <th>is_activate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>ryan</td>
+      <td>ryan at example.com</td>
+      <td>true</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>tom</td>
+      <td>tom at example.com</td>
+      <td>false</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>nick</td>
+      <td>nick at example.com</td>
+      <td>true</td>
+    </tr>
+  </tbody>
+</table>
+ 
+
+    // you can set header column setting at table initialization
+    AR.t('sheet 1', {headerColumnStartIndex:1, headerRowIndex: 2}).where(name: 'tom');
+
+    // you can set 
+
+
 ## Contribution
 
 Patch welcome! If you have question, please ask me at github issues.

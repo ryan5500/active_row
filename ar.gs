@@ -10,13 +10,19 @@
 var AR = {
   /**
    * シート名で指定されたシートを、テーブルとして返す
-   * @param {String} name シート名
+   * @param {String} name   シート名
+   * @param {Object] option テーブルの初期化オプション
    */
-  t: function(name) {
+  t: function(name, option) {
     if (typeof AR.memoTables === "undefined") { AR.memoTables = {}; }
 
     if (!AR.memoTables[name]) {
-      AR.memoTables[name] = new ARTable(name);
+      AR.memoTables[name] = new ARTable(name, option);
+    } else {
+      if (typeof option !== "undefined" &&
+          !Util.isEqual(AR.memoTables[name].getOption(), option)) {
+        AR.memoTables[name].setOption(option);
+      }
     }
 
     return AR.memoTables[name];
@@ -34,13 +40,14 @@ var ARTable = function(name, option) {
     throw new SheetNotFoundException("Sheet: " + name + "was not found.");
   }
 
+  var defaultOption = {
+                        headerRowIndex:         1,
+                        headerColumnStartIndex: 1,
+                      };
   if (typeof option === "undefined" || Object.keys(option).length === 0) {
-    this.option = {
-      headerRowIndex: 1,
-      headerColumnStartIndex: 1,
-    };
+    this.option = defaultOption;
   } else {
-    this.option = option || {};
+    this.option = Util.extend(defaultOption, option);
   }
 
 
@@ -107,6 +114,14 @@ ARTable.prototype = {
     return this._createTableObjects(hitRowIndexes);
   },
 
+  getOption: function() {
+    return this.option;
+  },
+
+  setOption: function(option) {
+    this.option = option;
+  },
+
   /**
    * 指定されたコラムに該当するデータのある行を探す
    * @param {String} column コラムの文字列
@@ -152,6 +167,32 @@ ARTable.prototype = {
     }
 
     return result;
+  },
+};
+
+
+var Util = {
+  extend: function(dest, source){
+    for (var property in source) {
+      dest[property] = source[property];
+    }
+
+    return dest;
+  },
+
+  isEqual: function(objA, objB) {
+    var objAKeys = Object.keys(objA);
+    var objBKeys = Object.keys(objB);
+
+    if (objAKeys.length !== objBKeys.length) { return false; }
+
+    for (var i = 0; i < objAKeys.length; i++) {
+      if (objA[objAKeys[i]] !== objB[objAKeys[i]]) {
+        return false;
+      }
+    }
+
+    return true;
   },
 };
 
